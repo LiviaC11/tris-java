@@ -1,0 +1,20 @@
+# Cache di Gradle e file di build
+.gradle/
+build/
+
+# File di configurazione di VS Code
+.settings/
+.vscode/
+.bin/
+.classpath
+.project
+
+# File compilati di Java
+*.class
+*.jar
+*.war
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
