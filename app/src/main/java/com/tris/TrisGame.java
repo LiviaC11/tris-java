@@ -23,7 +23,7 @@ public class TrisGame {
 
     public boolean makeMove(int row, int col) {
 
-        if (row > 0 && row < DIM && col > 0 && col < DIM) {
+        if (row >= 0 && row < DIM && col >= 0 && col < DIM) {
             if (this.board[row][col] == EMPTY) {
                 if (isHumanTurn) {
                     this.board[row][col] = HUMAN;
@@ -40,41 +40,22 @@ public class TrisGame {
     }
 
     public GameState checkGameState() {
-        if (board[0][0] == HUMAN && board[1][1] == HUMAN && board[2][2] == HUMAN) {
-            return GameState.HUMAN_WIN;
+        GameState diag1 = checkLine(board[0][0], board[1][1], board[2][2]);
+        if (diag1 != null) {
+            return diag1;
         }
-        if (board[0][0] == PC && board[1][1] == PC && board[2][2] == PC) {
-            return GameState.COMPUTER_WIN;
-        }
-        if (board[0][2] == PC && board[1][1] == PC && board[2][0] == PC) {
-            return GameState.COMPUTER_WIN;
-        }
-        if (board[0][2] == HUMAN && board[1][1] == HUMAN && board[2][0] == HUMAN) {
-            return GameState.HUMAN_WIN;
+        GameState diag2 = checkLine(board[0][2], board[1][1], board[2][0]);
+        if (diag2 != null) {
+            return diag2;
         }
         for (int i = 0; i < DIM; i++) {
-            int rowX = 0, rowO = 0;
-            int colX = 0, colO = 0;
+            GameState rowResult = checkLine(board[i][0], board[i][1], board[i][2]);
+            if (rowResult != null)
+                return rowResult;
 
-            for (int j = 0; j < DIM; j++) {
-                // Controllo della RIGA i
-                if (this.board[i][j] == HUMAN)
-                    rowX++;
-                else if (this.board[i][j] == PC)
-                    rowO++;
-
-                // Controllo della COLONNA i
-                if (this.board[j][i] == HUMAN)
-                    colX++;
-                else if (this.board[j][i] == PC)
-                    colO++;
-            }
-
-            // Verifica vittoria per la riga i o la colonna i
-            if (rowX == 3 || colX == 3)
-                return GameState.HUMAN_WIN;
-            if (rowO == 3 || colO == 3)
-                return GameState.COMPUTER_WIN;
+            GameState colResult = checkLine(board[0][i], board[1][i], board[2][i]);
+            if (colResult != null)
+                return colResult;
         }
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
@@ -85,6 +66,17 @@ public class TrisGame {
         }
         return GameState.DRAW;
 
+    }
+
+    private GameState checkLine(char c1, char c2, char c3) {
+        if (c1 != EMPTY && c1 == c2 && c2 == c3) {
+            if (c1 == HUMAN) {
+                return GameState.HUMAN_WIN;
+            } else {
+                return GameState.COMPUTER_WIN;
+            }
+        }
+        return null;
     }
 
     public void MakeComputerMove() {
@@ -103,6 +95,29 @@ public class TrisGame {
                 break;
             }
         }
+        isHumanTurn = true;
+    }
 
+    public void printBoard() {
+        for (int i = 0; i < DIM; i++) {
+            System.out.print("| ");
+            for (int j = 0; j < DIM; j++) {
+                System.out.print(this.board[i][j] + " | ");
+                if (j == 2) {
+                    System.out.println("");
+
+                }
+            }
+        }
+    }
+
+    public void printResult(GameState state) {
+        if (state == GameState.HUMAN_WIN) {
+            System.out.println("YOU WIN");
+        } else if (state == GameState.COMPUTER_WIN) {
+            System.out.println("PC WIN");
+        } else {
+            System.out.println("It's a draw, try again");
+        }
     }
 }
